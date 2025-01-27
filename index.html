@@ -1,60 +1,77 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obtener mi Ubicación</title>
-
-    <!-- Importar las funciones necesarias del SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
-
-        // Tu configuración de Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBGNtNoRgcGorsvpFLlJ3fJ9tw6UQt4pxg",
-            authDomain: "luna-c0804.firebaseapp.com",
-            projectId: "luna-c0804",
-            storageBucket: "luna-c0804.firebasestorage.app",
-            messagingSenderId: "1019336325336",
-            appId: "1:1019336325336:web:eaaf0ef9320d5211717fad",
-            measurementId: "G-7W0R8MLV2D"
-        };
-
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        // Función para obtener la ubicación
-        function obtenerUbicacion() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-
-                    // Mostrar la ubicación en la página
-                    document.getElementById('ubicacion').innerHTML = `Latitud: ${lat}, Longitud: ${lon}`;
-
-                    // Guardar la ubicación en Firebase
-                    const ubicacionRef = ref(database, 'ubicaciones');
-                    const nuevaUbicacion = push(ubicacionRef);
-                    set(nuevaUbicacion, {
-                        latitud: lat,
-                        longitud: lon,
-                        timestamp: Date.now()
-                    });
-                }, function(error) {
-                    alert("Error al obtener la ubicación.");
-                });
-            } else {
-                alert("La geolocalización no es compatible con este navegador.");
-            }
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obtener Ubicación</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
 </head>
 <body>
-    <h1>Obtener mi Ubicación</h1>
-    <button onclick="obtenerUbicacion()">Obtener Ubicación</button>
-    <p id="ubicacion"></p>
+  <h1>Obten tu ubicación</h1>
+  <button onclick="obtenerUbicacion()">Obtener ubicación</button>
+
+  <script type="module">
+    // Tu configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "tu-apiKey",
+      authDomain: "tu-proyecto.firebaseapp.com",
+      databaseURL: "https://tu-proyecto.firebaseio.com",
+      projectId: "tu-proyecto-id",
+      storageBucket: "tu-proyecto.appspot.com",
+      messagingSenderId: "tu-sender-id",
+      appId: "tu-app-id"
+    };
+
+    // Inicializar Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.getDatabase(app);
+
+    // Función para obtener la ubicación del usuario
+    function obtenerUbicacion() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(guardarUbicacion, mostrarError);
+      } else {
+        alert("La geolocalización no es compatible con este navegador.");
+      }
+    }
+
+    // Guardar la ubicación en Firebase
+    function guardarUbicacion(position) {
+      const latitud = position.coords.latitude;
+      const longitud = position.coords.longitude;
+      
+      // Crear una referencia a la base de datos de Firebase
+      const ubicacionRef = firebase.ref(database, 'ubicaciones/' + new Date().getTime());
+
+      // Guardar las coordenadas en Firebase
+      firebase.set(ubicacionRef, {
+        latitud: latitud,
+        longitud: longitud
+      }).then(() => {
+        console.log("Ubicación guardada correctamente.");
+      }).catch((error) => {
+        console.error("Error al guardar la ubicación:", error);
+      });
+    }
+
+    // Función para mostrar un error en caso de que no se pueda obtener la ubicación
+    function mostrarError(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          alert("El usuario denegó la solicitud de geolocalización.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("La información de la ubicación no está disponible.");
+          break;
+        case error.TIMEOUT:
+          alert("La solicitud de geolocalización ha expirado.");
+          break;
+        case error.UNKNOWN_ERROR:
+          alert("Ha ocurrido un error desconocido.");
+          break;
+      }
+    }
+  </script>
 </body>
 </html>
