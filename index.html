@@ -4,29 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Obtener Ubicación</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+  <!-- Importar Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBGNtNoRgcGorsvpFLlJ3fJ9tw6UQt4pxg",
+      authDomain: "luna-c0804.firebaseapp.com",
+      projectId: "luna-c0804",
+      storageBucket: "luna-c0804.firebasestorage.app",
+      messagingSenderId: "1019336325336",
+      appId: "1:1019336325336:web:eaaf0ef9320d5211717fad",
+      measurementId: "G-7W0R8MLV2D"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const analytics = getAnalytics(app);
+  </script>
 </head>
 <body>
   <h1>Obten tu ubicación</h1>
   <button onclick="obtenerUbicacion()">Obtener ubicación</button>
 
   <script type="module">
-    // Tu configuración de Firebase
-    const firebaseConfig = {
-      apiKey: "tu-apiKey",
-      authDomain: "tu-proyecto.firebaseapp.com",
-      databaseURL: "https://tu-proyecto.firebaseio.com",
-      projectId: "tu-proyecto-id",
-      storageBucket: "tu-proyecto.appspot.com",
-      messagingSenderId: "tu-sender-id",
-      appId: "tu-app-id"
-    };
-
-    // Inicializar Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.getDatabase(app);
-
     // Función para obtener la ubicación del usuario
     function obtenerUbicacion() {
       if (navigator.geolocation) {
@@ -42,10 +47,10 @@
       const longitud = position.coords.longitude;
       
       // Crear una referencia a la base de datos de Firebase
-      const ubicacionRef = firebase.ref(database, 'ubicaciones/' + new Date().getTime());
+      const ubicacionRef = ref(database, 'ubicaciones/' + new Date().getTime());
 
       // Guardar las coordenadas en Firebase
-      firebase.set(ubicacionRef, {
+      set(ubicacionRef, {
         latitud: latitud,
         longitud: longitud
       }).then(() => {
