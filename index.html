@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obtener mi Ubicación</title>
+
+    <!-- Importar las funciones necesarias del SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+
+        // Tu configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBGNtNoRgcGorsvpFLlJ3fJ9tw6UQt4pxg",
+            authDomain: "luna-c0804.firebaseapp.com",
+            projectId: "luna-c0804",
+            storageBucket: "luna-c0804.firebasestorage.app",
+            messagingSenderId: "1019336325336",
+            appId: "1:1019336325336:web:eaaf0ef9320d5211717fad",
+            measurementId: "G-7W0R8MLV2D"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Función para obtener la ubicación
+        function obtenerUbicacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    // Mostrar la ubicación en la página
+                    document.getElementById('ubicacion').innerHTML = `Latitud: ${lat}, Longitud: ${lon}`;
+
+                    // Guardar la ubicación en Firebase
+                    const ubicacionRef = ref(database, 'ubicaciones');
+                    const nuevaUbicacion = push(ubicacionRef);
+                    set(nuevaUbicacion, {
+                        latitud: lat,
+                        longitud: lon,
+                        timestamp: Date.now()
+                    });
+                }, function(error) {
+                    alert("Error al obtener la ubicación.");
+                });
+            } else {
+                alert("La geolocalización no es compatible con este navegador.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Obtener mi Ubicación</h1>
+    <button onclick="obtenerUbicacion()">Obtener Ubicación</button>
+    <p id="ubicacion"></p>
+</body>
+</html>
